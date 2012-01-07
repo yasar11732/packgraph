@@ -1,0 +1,86 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+    Copyright (C) 2011  Yaşar Arabacı
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""
+
+import re
+import datetime
+import time
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+
+from collections import Counter
+
+months    = mdates.MonthLocator()  # every month
+days      = mdates.DayLocator() # Every day
+monthsFmt = mdates.DateFormatter('%m-%Y')
+
+logfile = "/var/log/pacman.log"
+interesting_line = re.compile(
+    r"\[(?P<datetime>\d{4}-\d{2}-\d{2} \d{2}:\d{2})\] "
+    "(?P<action>installed|upgraded|removed)")
+
+installs = Counter()
+upgrades = Counter()
+removes  = Counter()
+with open(logfile) as logfile:
+    for line in logfile:
+        match = interesting_line.search(line)
+        if match:
+            struct = time.strptime(match.group("datetime"),"%Y-%m-%d %H:%S")
+            date = datetime.date(struct.tm_year, struct.tm_mon, struct.tm_mday)
+            if match.group("action") == "installed":
+                installs[date] += 1
+            elif match.group("action") == "upgraded":
+                upgrades[date] += 1
+            elif match.group("action") == "removed":
+                removes[date] += 1
+
+
+fig = plt.figure()
+ax = fig.add_subplot(111)
+insdatenumpairs = zip(installs.keys(), installs.values())
+insdatenumpairs = sorted(insdatenumpairs, key = lambda pair: pair[0])
+
+upgdatenumpairs = zip(upgrades.keys(), upgrades.values())
+upgdatenumpairs = sorted(upgdatenumpairs, key = lambda pair: pair[0])
+
+remdatenumpairs = zip(removes.keys(), removes.values())
+remdatenumpairs = sorted(remdatenumpairs, key = lambda pair: pair[0])
+
+ax.plot([pair[0] for pair in insdatenumpairs],[pair[1] for pair in insdatenumpairs],"b")
+ax.plot([pair[0] for pair in upgdatenumpairs],[pair[1] for pair in upgdatenumpairs],"g")
+ax.plot([pair[0] for pair in remdatenumpairs],[pair[1] for pair in remdatenumpairs],"y")
+
+ax.xaxis.set_major_locator(months)
+ax.xaxis.set_major_formatter(monthsFmt)
+ax.xaxis.set_minor_locator(days)
+
+datemin = datetime.datetime(min(installs).year, min(installs).month -1, min(installs).day)
+mdate = max([max(installs), max(upgrades), max(removes)])
+datemax = datetime.date(mdate.year, mdate.month + 1, mdate.day)
+ax.set_xlim(datemin, datemax)
+ax.format_xdata = mdates.DateFormatter('%Y-%m-%d')
+
+ax.grid(True)
+fig.autofmt_xdate()
+plt.legend(("installs","upgrades","removes"))
+plt.xlabel("Date")
+plt.ylabel("# of packages")
+plt.show()

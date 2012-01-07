@@ -1,0 +1,12 @@
+packgraph consists of 2 scripts, which can be executed directly:
+
+packgraph -> graphs your install, upgrade, remove activities of packages.
+totalpackgraph -> graphs number of installed packages over time.
+
+This package is inteded for ArchLinux. Information about packages comes from
+pacman log file.
+
+Dependencies:
+matplotlib
+numpy
+
