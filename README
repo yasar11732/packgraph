@@ -7,6 +7,5 @@ This package is inteded for ArchLinux. Information about packages comes from
 pacman log file.
 
 Dependencies:
-matplotlib
-numpy
+matplotlib (python2-matplotlib in archlinux)
 

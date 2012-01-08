@@ -8,6 +8,6 @@ setup(name='packagegraph',
       description='Graph pacman activity',
       author='Yaşar Arabacı',
       author_email='yasar11732@gmail.com',
-      url='yasararabaci.tumbler.com',
+      url='https://github.com/yasar11732/packgraph',
       scripts=['totalpackgraph', 'packgraph']
      )
