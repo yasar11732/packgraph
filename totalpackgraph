@@ -61,10 +61,6 @@ ax.xaxis.set_major_locator(months)
 ax.xaxis.set_major_formatter(monthsFmt)
 ax.xaxis.set_minor_locator(days)
 
-datemin = datetime.datetime(min(packs).year, min(packs).month -1, min(packs).day)
-mdate = max(packs)
-datemax = datetime.date(mdate.year, mdate.month + 1, mdate.day)
-ax.set_xlim(datemin, datemax)
 ax.format_xdata = mdates.DateFormatter('%Y-%m-%d')
 
 ax.grid(True)

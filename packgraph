@@ -70,10 +70,6 @@ ax.xaxis.set_major_locator(months)
 ax.xaxis.set_major_formatter(monthsFmt)
 ax.xaxis.set_minor_locator(days)
 
-datemin = datetime.datetime(min(installs).year, min(installs).month -1, min(installs).day)
-mdate = max([max(installs), max(upgrades), max(removes)])
-datemax = datetime.date(mdate.year, mdate.month + 1, mdate.day)
-ax.set_xlim(datemin, datemax)
 ax.format_xdata = mdates.DateFormatter('%Y-%m-%d')
 
 ax.grid(True)
